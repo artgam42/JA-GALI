@@ -1,0 +1,18 @@
+# Sekrè — PA JANM push sa yo
+.env
+service-account.json
+*.pem
+
+# Python
+venv/
+__pycache__/
+*.pyc
+.pytest_cache/
+
+# Editè / OS
+.DS_Store
+.vscode/
+.idea/
+
+# Node (si itilize pita)
+node_modules/
