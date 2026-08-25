@@ -8,3 +8,6 @@ pydantic==2.9.2
 google-api-python-client==2.149.0
 google-auth==2.35.0
 google-auth-httplib2==0.2.0
+
+# Faz 2 — Discord webhooks
+requests==2.32.3

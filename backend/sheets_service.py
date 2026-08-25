@@ -16,6 +16,7 @@ Mapping kòlòn (gade Contexte.md §6 pou detay konplè):
 """
 
 import os
+from typing import Optional
 from google.oauth2 import service_account
 from googleapiclient.discovery import build
 
@@ -133,3 +134,86 @@ def ekri_antre_pwoje(
     ).execute()
 
     return liy
+
+
+def jwenn_liy_pa_kòd(kòd_pwoje: str) -> list[list]:
+    """
+    Chèche tout liy nan Journal la ki lye ak yon kòd pwojè.
+    Li kolòn A:Q (pou gen done prensipal yo ak kolaboratè a).
+
+    Retounen yon lis lis, kote chak lis reprezante yon liy ki koresponn.
+    """
+    kòd_nòmalize = kòd_pwoje.strip().upper()
+    liy_yo = li_liy("A:Q")
+
+    liy_filtre = []
+    for liy in liy_yo:
+        # Deskripsyon an nan kolòn E (endèks 4)
+        if len(liy) > 4:
+            deskripsyon = liy[4].strip()
+            # Tcheke si deskripsyon an kòmanse ak kòd pwojè a
+            if deskripsyon.upper().startswith(kòd_nòmalize):
+                rès = deskripsyon[len(kòd_nòmalize):].strip()
+                if not rès or rès.startswith(":") or rès.startswith("-"):
+                    liy_filtre.append(liy)
+
+    return liy_filtre
+
+
+# ── Faz 1.7 / Faz 2 — Onglè kache pou message_id Discord ────────────
+
+#
+# Onglè "Discord_IDs" (kache, pa vizib nan itilizasyon nòmal Sheet la)
+# kenbe mapping: Kòd Pwojè | Message ID — pou nou ka edite mesaj
+# Discord orijinal la lè yon pwojè make FINI (gade Contexte.md).
+
+ONGLÈ_DISCORD_IDS = "Discord_IDs"
+
+
+def estoke_message_id(kòd_pwoje: str, message_id: str) -> None:
+    """
+    Anrejistre yon nouvo koup (Kòd Pwojè, Message ID) nan onglè
+    Discord_IDs. Apele sa apre 2.3 (premye mesaj Discord voye a).
+    """
+    sèvis = _sèvis_sheets()
+    sheet_id, _ = _id_sheet_ak_onglè()
+
+    # Jwenn pwochen liy vid nan onglè Discord_IDs (kolòn A)
+    rezilta = (
+        sèvis.spreadsheets()
+        .values()
+        .get(spreadsheetId=sheet_id, range=f"'{ONGLÈ_DISCORD_IDS}'!A:A")
+        .execute()
+    )
+    liy = len(rezilta.get("values", [])) + 1
+
+    sèvis.spreadsheets().values().update(
+        spreadsheetId=sheet_id,
+        range=f"'{ONGLÈ_DISCORD_IDS}'!A{liy}:B{liy}",
+        valueInputOption="USER_ENTERED",
+        body={"values": [[kòd_pwoje, message_id]]},
+    ).execute()
+
+
+def jwenn_message_id(kòd_pwoje: str) -> Optional[str]:
+    """
+    Chèche message_id Discord ki lye ak yon kòd pwojè, nan onglè
+    Discord_IDs. Retounen None si pa jwenn (pa gen mesaj lye ak kòd la).
+    """
+    sèvis = _sèvis_sheets()
+    sheet_id, _ = _id_sheet_ak_onglè()
+
+    rezilta = (
+        sèvis.spreadsheets()
+        .values()
+        .get(spreadsheetId=sheet_id, range=f"'{ONGLÈ_DISCORD_IDS}'!A:B")
+        .execute()
+    )
+    liy_yo = rezilta.get("values", [])
+
+    kòd_nòmalize = kòd_pwoje.strip().upper()
+    for liy in liy_yo:
+        if len(liy) >= 2 and liy[0].strip().upper() == kòd_nòmalize:
+            return liy[1]
+
+    return None

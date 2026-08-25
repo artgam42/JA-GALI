@@ -111,15 +111,108 @@ def chat(mesaj: MesajChat, _: None = Depends(verifye_kòd_aksè)):
     Woutt prensipal — resevwa yon mesaj an lang natirèl, retounen yon repons.
     Pwoteje pa kòd aksè (X-Access-Code header) — gade verifye_kòd_aksè().
 
-    Faz 1.1 (kounye a): jis konfime mesaj la byen resevwa (echo).
-    Faz 1.5 (pita): backend ap voye mesaj la bay Claude pou ekstraksyon
-    done reyèl (kliyan, tip travay, elatriye) anvan l repons.
+    Lojik entèn (backend deside, PWA pa bezwen konnen detay yo):
+      1. Si mesaj la vid → mesaj avètisman
+      2. Si mesaj la matche yon kòmand "pwojè fini" (regex, san Claude,
+         Faz 1.7) → trete l kòm sa, retounen estati a
+      3. Otreman → echo pou kounye a (Faz 1.5 ap ranplase sa ak vrè
+         ekstraksyon Claude)
     """
     if not mesaj.message or not mesaj.message.strip():
         return RepònsChat(response="⚠️ Mesaj la vid — ekri yon kòmand.")
+
+    # Tès rapid san Sheets: si pa gen kòd+mo kle "fini" nan mesaj la,
+    # pa menm eseye konekte ak Sheets — sa evite erè initil pou mesaj
+    # nòmal (kreyasyon pwojè, elatriye).
+    from estati_pwoje import detekte_kòmand_fini
+
+    if detekte_kòmand_fini(mesaj.message) is not None:
+        from estati_pwoje import pwosè_kòmand_fini
+        from discord_service import edite_mesaj_fini_san_kraze
+
+        try:
+            rezilta = pwosè_kòmand_fini(mesaj.message)
+
+            if rezilta["message_id"] is not None:
+                reyisi = edite_mesaj_fini_san_kraze(
+                    rezilta["kòd"], rezilta["message_id"]
+                )
+                if reyisi:
+                    return RepònsChat(
+                        response=f"✅ Pwojè '{rezilta['kòd']}' make FINI — mesaj Discord edite."
+                    )
+                else:
+                    return RepònsChat(
+                        response=f"⚠️ Pwojè '{rezilta['kòd']}' rekonèt men edisyon Discord echwe "
+                        f"(verifye webhook konfigire nan .env)."
+                    )
+
+            return RepònsChat(response=rezilta["estati"])
+        except Exception as e:
+            return RepònsChat(
+                response=f"⚠️ Erè pandan trete kòmand 'fini' a: {e}"
+            )
+
+    # ── Detekte Kòmand Peman ak Depans (Faz 3) ───────────────────────
+    import re
+
+    # 1. Detekte Peman: "peye [montan] pou [kòd]" oswa "peman [montan] [kòd]"
+    patèn_peman = re.compile(
+        r"\b(?:peye|peman)\s+(\d+(?:\.\d+)?)\s*(?:pou\s+)?(?:pwojè\s+)?\b(PW\d{2}-\d{3,4}-[A-Za-z]|JA-[PC]\d{3}-\d{3,4}[A-Za-z])\b",
+        re.IGNORECASE
+    )
+    match_peman = patèn_peman.search(mesaj.message)
+    if match_peman:
+        from peman import ajoute_peman
+        try:
+            montan = float(match_peman.group(1))
+            kòd = match_peman.group(2).upper()
+            rezilta = ajoute_peman(kòd, montan)
+            return RepònsChat(response=rezilta["mesaj"])
+        except Exception as e:
+            return RepònsChat(response=f"⚠️ Erè pandan anrejistreman peman an: {e}")
+
+    # 2. Detekte Depans: "depans [montan] kategori [kategori] pou [non_depans] : [deskripsyon]"
+    patèn_depans = re.compile(
+        r"\bdepans\s+(\d+(?:\.\d+)?)\s+(?:kategori\s+)?(\w+)\s+(?:pou\s+)?([^:]+)(?::\s*(.+))?",
+        re.IGNORECASE
+    )
+    match_depans = patèn_depans.search(mesaj.message)
+    if match_depans:
+        from depans import ajoute_depans
+        try:
+            montan = float(match_depans.group(1))
+            kategori = match_depans.group(2)
+            non_depans = match_depans.group(3).strip()
+            deskripsyon = match_depans.group(4).strip() if match_depans.group(4) else non_depans
+            
+            rezilta = ajoute_depans(
+                kategori=kategori,
+                deskripsyon=deskripsyon,
+                montan=montan,
+                non_depans=non_depans
+            )
+            return RepònsChat(response=rezilta["mesaj"])
+        except Exception as e:
+            return RepònsChat(response=f"⚠️ Erè pandan anrejistreman depans lan: {e}")
 
     return RepònsChat(
         response=f"✅ Mesaj resevwa: « {mesaj.message} » "
         f"(ekstraksyon Claude ap vin nan tach 1.5)"
     )
+
+
+@app.get("/payroll")
+def get_payroll(mwa: int = 3, _: None = Depends(verifye_kòd_aksè)):
+    """
+    Woutt ki retounen rapò payroll kolaboratè yo pou dènye N mwa yo.
+    """
+    from payroll import rezime_payroll
+    try:
+        rezilta = rezime_payroll(mwa_kont=mwa)
+        return rezilta
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+
 

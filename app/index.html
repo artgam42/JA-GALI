@@ -2,18 +2,67 @@
 <html lang="fr">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0" />
   <title>JA-GALI — JUST ART</title>
+
+  <link rel="manifest" href="manifest.json" />
+  <link rel="icon" href="favicon.png" />
+  <link rel="apple-touch-icon" href="ikon/ikon-192.png" />
+  <meta name="theme-color" content="#001e00" />
+
   <link rel="stylesheet" href="style.css" />
-  <!-- manifest.json ak service worker ap vin konplete nan tach 1.9 -->
 </head>
 <body>
-  <main id="app-root">
-    <h1>JA-GALI</h1>
-    <p>Asistan AI JUST ART — Faz 0 : fondasyon k ap prepare.</p>
-    <p id="statut-backend">🔄 Verifikasyon backend...</p>
-  </main>
+
+  <!-- ═══════════ PAJ LOGIN ═══════════ -->
+  <section id="paj-login" class="paj">
+    <div class="kat-login">
+      <img src="ikon/ikon-192.png" alt="JUST ART" class="logo-login" />
+      <h1>JA-GALI</h1>
+      <p class="soutit">Antre kòd aksè ekip ou a</p>
+
+      <form id="fòm-login">
+        <input
+          type="password"
+          id="chan-kòd"
+          placeholder="Kòd aksè"
+          autocomplete="off"
+          required
+        />
+        <button type="submit">Antre</button>
+      </form>
+
+      <p id="erè-login" class="mesaj-erè"></p>
+    </div>
+  </section>
+
+  <!-- ═══════════ PAJ CHAT ═══════════ -->
+  <section id="paj-chat" class="paj kache">
+    <header class="tèt-chat">
+      <img src="ikon/ikon-192.png" alt="JUST ART" class="logo-tèt" />
+      <span>JA-GALI</span>
+      <button id="bouton-dekonekte" title="Dekonekte">⏻</button>
+    </header>
+
+    <main id="lis-mesaj" class="lis-mesaj"></main>
+
+    <form id="fòm-chat" class="fòm-chat">
+      <input
+        type="text"
+        id="chan-mesaj"
+        placeholder="Ekri yon kòmand... (egzanp: Nouvo pwojè pou Kafe Lakay...)"
+        autocomplete="off"
+      />
+      <button type="submit">➤</button>
+    </form>
+  </section>
 
   <script src="app.js"></script>
+
+  <script>
+    if ("serviceWorker" in navigator) {
+      navigator.serviceWorker.register("service-worker.js");
+    }
+  </script>
 </body>
 </html>

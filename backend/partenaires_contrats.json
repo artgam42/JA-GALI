@@ -1,0 +1,15 @@
+{
+  "patnè": {
+    "MILIORA": {"nimewo": "001", "estati": "rezilye"},
+    "MARICA": {"nimewo": "002", "estati": "stop"},
+    "ALAGOU NANIE": {"nimewo": "003", "estati": "stop"},
+    "EP PROF PAROLIER": {"nimewo": "004", "estati": "stop"},
+    "YVES PRODUCTIONS": {"nimewo": "005", "estati": "aktif"}
+  },
+  "kontra": {
+    "MA'AT": {"nimewo": "001", "estati": "non renouvle"},
+    "INNOVATION INSTITUTE": {"nimewo": "002", "estati": "non renouvle"},
+    "OLAMEL POLYCLINIQUE": {"nimewo": "003", "estati": "kontra rompu"},
+    "MEX509 & MELSCHY ELECTRONIC": {"nimewo": "004", "estati": "aktif"}
+  }
+}
