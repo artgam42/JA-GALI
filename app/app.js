@@ -1,7 +1,7 @@
 // JA-GALI — PWA (Faz 1.8/1.9)
 // Login senp + chat ki rele backend /chat sèlman (Faz 1.7 fizyone anndan).
 
-const API_URL = "http://localhost:8000"; // chanje sa nan Faz 7 (deplwaman)
+const API_URL = "https://gali.up.railway.app"; // Railway backend URL
 const KLE_STOKAJ = "ja-gali-kòd-aksè";
 
 // ── Referans eleman HTML ──────────────────────────────────────────────
