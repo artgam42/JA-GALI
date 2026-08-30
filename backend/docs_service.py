@@ -24,10 +24,19 @@ SCOPES = [
 
 def _kredansyèl():
     fichye_kle = os.getenv("GOOGLE_SERVICE_ACCOUNT_FILE", "service-account.json")
+    json_env = os.getenv("GOOGLE_CREDENTIALS_JSON")
+
+    if json_env:
+        import json
+        try:
+            info = json.loads(json_env)
+            return service_account.Credentials.from_service_account_info(info, scopes=SCOPES)
+        except Exception as e:
+            raise ValueError(f"Erè nan GOOGLE_CREDENTIALS_JSON: {e}")
 
     if not os.path.exists(fichye_kle):
         raise FileNotFoundError(
-            f"Fichye service account pa jwenn: '{fichye_kle}'."
+            f"Fichye service account pa jwenn: '{fichye_kle}' epi GOOGLE_CREDENTIALS_JSON pa konfigire."
         )
 
     return service_account.Credentials.from_service_account_file(

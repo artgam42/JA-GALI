@@ -44,17 +44,23 @@ def _sèvis_drive():
     service account (menm fichye JSON ak Sheets/Calendar).
     """
     fichye_kle = os.getenv("GOOGLE_SERVICE_ACCOUNT_FILE", "service-account.json")
+    json_env = os.getenv("GOOGLE_CREDENTIALS_JSON")
 
-    if not os.path.exists(fichye_kle):
-        raise FileNotFoundError(
-            f"Fichye service account pa jwenn: '{fichye_kle}'. "
-            f"Verifye li nan dosye backend/ epi non li matche "
-            f"GOOGLE_SERVICE_ACCOUNT_FILE nan .env."
+    if json_env:
+        import json
+        try:
+            info = json.loads(json_env)
+            kredansyèl = service_account.Credentials.from_service_account_info(info, scopes=SCOPES)
+        except Exception as e:
+            raise ValueError(f"Erè nan GOOGLE_CREDENTIALS_JSON: {e}")
+    elif os.path.exists(fichye_kle):
+        kredansyèl = service_account.Credentials.from_service_account_file(
+            fichye_kle, scopes=SCOPES
         )
-
-    kredansyèl = service_account.Credentials.from_service_account_file(
-        fichye_kle, scopes=SCOPES
-    )
+    else:
+        raise FileNotFoundError(
+            f"Fichye service account pa jwenn: '{fichye_kle}' epi GOOGLE_CREDENTIALS_JSON pa konfigire."
+        )
     return build("drive", "v3", credentials=kredansyèl)
 
 
