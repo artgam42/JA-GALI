@@ -7,9 +7,12 @@ Sa a se fondasyon an. Woutt yo (routes) pou pwojè, peman, elatriye
 ap vin ajoute nan Faz 1+.
 """
 
+# pyrefly: ignore [missing-import]
 from fastapi import Depends, FastAPI, Header, HTTPException
+# pyrefly: ignore [missing-import]
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
+# pyrefly: ignore [missing-import]
 from dotenv import load_dotenv
 import os
 
@@ -153,6 +156,25 @@ def chat(mesaj: MesajChat, _: None = Depends(verifye_kòd_aksè)):
                 response=f"⚠️ Erè pandan trete kòmand 'fini' a: {e}"
             )
 
+    # 0bis. Detekte "lis solde" — montre pwojè ki gen rès pou peye
+    if re.search(r"\blis\s+solde\b", mesaj.message, re.IGNORECASE):
+        from peman import lis_solde_yo
+        try:
+            solde_yo = lis_solde_yo(mwa_kont=3)
+            if not solde_yo:
+                return RepònsChat(
+                    response="✅ Pa gen okenn solde k ap tann pou dènye 3 mwa yo."
+                )
+            liy_tèks = "\n".join(
+                f"• {s['kliyan']} — {s['kòd']} : {s['rès']} goud"
+                for s in solde_yo
+            )
+            return RepònsChat(
+                response=f"💰 Solde k ap tann (dènye 3 mwa):\n\n{liy_tèks}"
+            )
+        except Exception as e:
+            return RepònsChat(response=f"⚠️ Erè pandan chèche lis solde: {e}")
+
     # ── Detekte Kòmand Peman ak Depans (Faz 3) ───────────────────────
     import re
 
@@ -265,6 +287,7 @@ def post_rapò(mwa: int = 3, _: None = Depends(verifye_kòd_aksè)):
     epi retounen fichye a dirèkteman pou telechajman. Deklannche pa
     bouton "Jenere Rapò" PWA a.
     """
+    # pyrefly: ignore [missing-import]
     from fastapi.responses import Response
     from rapo_service import jenere_rapò_pdf
 

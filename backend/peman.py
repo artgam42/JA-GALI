@@ -5,7 +5,8 @@ Modil sa a kalkile rès dwe sou yon pwojè epi ajoute nouvo liy tranzaksyon
 lè yon kliyan peye yon rès kòb (Solde).
 """
 
-from datetime import date
+import re
+from datetime import date, datetime, timedelta
 from typing import Optional, Tuple, Dict, Any
 from sheets_service import jwenn_liy_pa_kòd, ekri_antre_pwoje, li_liy
 
@@ -131,3 +132,81 @@ def ajoute_peman(kòd_pwoje: str, montan_payer: float) -> dict:
         "nouvo_balans": balans_nouvo,
         "mesaj": f"Peman {montan_payer} anrejistre pou pwojè {kòd_nòmalize}. Nouvo balans: {balans_nouvo}."
     }
+
+def lis_solde_yo(mwa_kont: int = 3) -> list:
+    """
+    Retounen lis tout pwojè ki gen yon rès poko peye (solde), pou
+    pwojè ki te KREYE nan dènye 'mwa_kont' mwa yo.
+
+    Retounen yon lis dict: [{"kliyan", "kòd", "rès", "dat"}, ...]
+    triye pa dat kreyasyon (pi resan an premye).
+    """
+    liy_yo = li_liy("A:Q")
+    if not liy_yo:
+        return []
+
+    entete = liy_yo[0]
+    idx_dat, idx_kliyan, idx_desc = 0, 2, 4
+
+    for i, selil in enumerate(entete):
+        sel_clean = selil.strip().upper()
+        if "DAT" in sel_clean:
+            idx_dat = i
+        elif "KLIYAN" in sel_clean or "FOURNIS" in sel_clean:
+            idx_kliyan = i
+        elif "DESCRIPTION" in sel_clean:
+            idx_desc = i
+
+    jodi_a = date.today()
+    limit_dat = jodi_a - timedelta(days=30 * mwa_kont)
+
+    patèn_kòd = re.compile(
+        r"^(PW\d{2}-\d{3,4}-[A-Za-z]|JA-[PC]\d{3}-\d{3,4}[A-Za-z])",
+        re.IGNORECASE,
+    )
+
+    kòd_yo_jwenn = {}  # kòd -> (dat_kreyasyon, kliyan)
+
+    for liy in liy_yo[1:]:
+        if len(liy) <= idx_desc:
+            continue
+        desc = liy[idx_desc].strip()
+        if ": SOLDE" in desc.upper():
+            continue  # sote liy peman — nou vle sèlman liy kreyasyon ORIJINAL
+
+        matche = patèn_kòd.match(desc)
+        if not matche:
+            continue
+        kòd = matche.group(1).upper()
+
+        dat_tèks = liy[idx_dat].strip() if len(liy) > idx_dat else ""
+        dat_obj = None
+        for fòma in ("%d/%m/%Y", "%Y-%m-%d"):
+            try:
+                dat_obj = datetime.strptime(dat_tèks, fòma).date()
+                break
+            except ValueError:
+                continue
+        if dat_obj is None or dat_obj < limit_dat:
+            continue
+
+        if kòd not in kòd_yo_jwenn:
+            kliyan = liy[idx_kliyan].strip() if len(liy) > idx_kliyan else ""
+            kòd_yo_jwenn[kòd] = (dat_obj, kliyan)
+
+    rezilta = []
+    for kòd, (dat_obj, kliyan) in kòd_yo_jwenn.items():
+        try:
+            rès, enfo = kalkile_rès_dwe(kòd)
+        except ValueError:
+            continue
+        if rès > 0:
+            rezilta.append({
+                "kliyan": enfo["kliyan"] or kliyan,
+                "kòd": kòd,
+                "rès": round(rès, 2),
+                "dat": dat_obj.isoformat(),
+            })
+
+    rezilta.sort(key=lambda r: r["dat"], reverse=True)
+    return rezilta

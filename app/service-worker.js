@@ -4,7 +4,7 @@
 // PA mete API backend la (/chat, /pwoje/fini) an kachèt — done yo dwe
 // toujou fre. Sèlman fichye estatik yo (HTML/CSS/JS/ikòn) mete an kachèt.
 
-const NON_KACHÈ = "ja-gali-v3";
+const NON_KACHÈ = "ja-gali-v5";
 
 const FICHYE_POU_KACHE = [
   "/index.html",
@@ -13,6 +13,7 @@ const FICHYE_POU_KACHE = [
   "/manifest.json",
   "/ikon/ikon-192.png",
   "/ikon/ikon-512.png",
+  "/ikon/gid.png",
 ];
 
 // ── Enstalasyon: mete fichye estatik yo an kachèt ────────────────────
@@ -41,7 +42,6 @@ self.addEventListener("activate", (evenman) => {
 self.addEventListener("fetch", (evenman) => {
   const url = new URL(evenman.request.url);
 
-  // JANM kache woutt API yo — done yo dwe toujou fre.
   const se_yon_woutt_api =
     url.pathname.startsWith("/chat") ||
     url.pathname.startsWith("/pwoje") ||
@@ -52,13 +52,22 @@ self.addEventListener("fetch", (evenman) => {
     return;
   }
 
-  // Lè w ap devlope sou localhost, toujou inyore kachèt la pou w wè chanjman w yo dirèk
   if (url.hostname === "localhost" || url.hostname === "127.0.0.1") {
     evenman.respondWith(fetch(evenman.request));
     return;
   }
 
-  // Pou fichye estatik: eseye kachè a dabò, apre rezo a si pa jwenn.
+  // NETWORK-FIRST pou paj HTML — evite paj ki "kole" sou ansyen vèsyon
+  // apre chak deplwaman. Sèvi kachèt la sèlman si rezo a pa disponib.
+  if (evenman.request.mode === "navigate" || url.pathname.endsWith(".html")) {
+    evenman.respondWith(
+      fetch(evenman.request).catch(() => caches.match(evenman.request))
+    );
+    return;
+  }
+
+  // CACHE-FIRST rete pou fichye estatik yo (css/js/ikon) — yo pa chanje
+  // souvan, epi yo pi gwo, kidonk kachèt la bon pou yo.
   evenman.respondWith(
     caches.match(evenman.request).then((repons_kachè) => {
       return repons_kachè || fetch(evenman.request);

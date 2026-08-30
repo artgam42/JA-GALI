@@ -286,18 +286,18 @@ boutonRapò.addEventListener("click", async () => {
 
 // ── Faz 5.4: Paj Caption ─────────────────────────────────────────────
 
-const boutonCaption         = document.getElementById("bouton-caption");
-const boutonTounenChatCap   = document.getElementById("bouton-tounen-chat-caption");
-const pajCaption            = document.getElementById("paj-caption");
-const fòmCaption            = document.getElementById("fòm-caption");
-const chanNonPiblikasyon    = document.getElementById("chan-non-piblikasyon");
-const boutonMandeCaption    = document.getElementById("bouton-mande-caption");
-const zònRezilta            = document.getElementById("zòn-rezilta-caption");
-const tèksCaption           = document.getElementById("tèks-caption");
-const boutonAksepte         = document.getElementById("bouton-aksepte-caption");
-const boutonRechaje         = document.getElementById("bouton-rechaje-caption");
-const konfirmasyon          = document.getElementById("konfirmasyon-caption");
-const estatiCaption         = document.getElementById("estati-caption");
+const boutonCaption = document.getElementById("bouton-caption");
+const boutonTounenChatCap = document.getElementById("bouton-tounen-chat-caption");
+const pajCaption = document.getElementById("paj-caption");
+const fòmCaption = document.getElementById("fòm-caption");
+const chanNonPiblikasyon = document.getElementById("chan-non-piblikasyon");
+const boutonMandeCaption = document.getElementById("bouton-mande-caption");
+const zònRezilta = document.getElementById("zòn-rezilta-caption");
+const tèksCaption = document.getElementById("tèks-caption");
+const boutonAksepte = document.getElementById("bouton-aksepte-caption");
+const boutonRechaje = document.getElementById("bouton-rechaje-caption");
+const konfirmasyon = document.getElementById("konfirmasyon-caption");
+const estatiCaption = document.getElementById("estati-caption");
 
 // Navige ale nan paj Caption
 boutonCaption.addEventListener("click", () => {
@@ -474,7 +474,7 @@ async function chaje_payroll() {
       if (montan > 0) {
         const kat = document.createElement("div");
         kat.className = "kat-payroll";
-        
+
         // Fòmate lajan an avèk vigil olye de pwen (opsyonèl)
         const lajan_fòmate = montan.toFixed(2).replace(/\d(?=(\d{3})+\.)/g, '$&,');
 
@@ -489,7 +489,7 @@ async function chaje_payroll() {
     });
 
     if (lisPayroll.innerHTML === "") {
-        lisPayroll.innerHTML = '<p class="alèt-vid">✅ Pa gen payroll aktif pou peryòd sa a.</p>';
+      lisPayroll.innerHTML = '<p class="alèt-vid">✅ Pa gen payroll aktif pou peryòd sa a.</p>';
     }
   } catch (err) {
     lisPayroll.innerHTML = '<p class="alèt-vid">⚠️ Pa ka chaje payroll la. Verifye backend la ap kouri.</p>';
@@ -507,4 +507,23 @@ boutonTounenChatPayroll.addEventListener("click", () => {
   pajChat.classList.remove("kache");
 });
 
+// ── Popup Gid Kòmand ──────────────────────────────────────────────────
 
+const boutonGid = document.getElementById("bouton-gid");
+const boutonFèmenGid = document.getElementById("bouton-fèmen-gid");
+const modalGid = document.getElementById("modal-gid");
+
+boutonGid.addEventListener("click", () => {
+  modalGid.classList.remove("kache");
+});
+
+boutonFèmenGid.addEventListener("click", () => {
+  modalGid.classList.add("kache");
+});
+
+// Fèmen si klike deyò kat la (sou fon nwa a)
+modalGid.addEventListener("click", (evenman) => {
+  if (evenman.target === modalGid) {
+    modalGid.classList.add("kache");
+  }
+});

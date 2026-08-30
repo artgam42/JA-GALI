@@ -482,3 +482,104 @@ body {
   font-size: 1.2rem;
   color: var(--vèt-briyan);
 }
+
+/* ═══════════ POPUP GID KÒMAND ═══════════ */
+.modal-anvlòp {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.6);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1.25rem;
+  z-index: 1000;
+}
+
+.modal-kat {
+  background: var(--vèt-fonse);
+  border: 1px solid #1a3a1a;
+  border-radius: 16px;
+  max-width: 420px;
+  width: 100%;
+  max-height: 80vh;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.modal-tèt {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 1rem 1.25rem;
+  background: #0a2a0a;
+  border-bottom: 1px solid #1a3a1a;
+  font-weight: 500;
+  font-size: 1rem;
+}
+
+.bouton-fèmen-modal {
+  background: none;
+  border: none;
+  color: var(--gri-mwayen);
+  font-size: 1.2rem;
+  cursor: pointer;
+  padding: 0.25rem 0.5rem;
+}
+
+.bouton-fèmen-modal:hover {
+  color: var(--blan);
+}
+
+.modal-kò {
+  padding: 1.25rem;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 1.1rem;
+}
+
+.gid-seksyon {
+  border-left: 3px solid var(--vèt-briyan);
+  padding-left: 0.9rem;
+}
+
+.gid-tit {
+  font-weight: 400;
+  font-size: 0.80rem;
+  margin-bottom: 0.30rem;
+}
+
+.gid-deskripsyon {
+  color: var(--gri-mwayen);
+  font-size: 0.70rem;
+  margin-bottom: 0.4rem;
+}
+
+.gid-souliste {
+  list-style: none;
+  color: var(--gri-mwayen);
+  font-size: 0.70rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+}
+
+.gid-kòd {
+  display: block;
+  background: #0a2a0a;
+  border: 1px solid #2a4a2a;
+  border-radius: 8px;
+  padding: 0.6rem 0.8rem;
+  font-size: 0.70rem;
+  color: var(--vèt-briyan);
+  margin-bottom: 0.3rem;
+  overflow-x: auto;
+  /* white-space: nowrap; */
+}
+
+.gid-egzanp {
+  color: var(--gri-mwayen);
+  font-size: 0.7rem;
+  font-style: italic;
+}
