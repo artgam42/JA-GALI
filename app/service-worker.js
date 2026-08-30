@@ -4,7 +4,7 @@
 // PA mete API backend la (/chat, /pwoje/fini) an kachèt — done yo dwe
 // toujou fre. Sèlman fichye estatik yo (HTML/CSS/JS/ikòn) mete an kachèt.
 
-const NON_KACHÈ = "ja-gali-v2";
+const NON_KACHÈ = "ja-gali-v3";
 
 const FICHYE_POU_KACHE = [
   "/index.html",
