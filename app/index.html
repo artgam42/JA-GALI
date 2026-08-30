@@ -1,9 +1,10 @@
 <!DOCTYPE html>
 <html lang="fr">
+
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0" />
-  <title>JA-GALI — JUST ART</title>
+  <title>GALI</title>
 
   <link rel="manifest" href="manifest.json" />
   <link rel="icon" href="favicon.png" />
@@ -12,23 +13,18 @@
 
   <link rel="stylesheet" href="style.css" />
 </head>
+
 <body>
 
   <!-- ═══════════ PAJ LOGIN ═══════════ -->
   <section id="paj-login" class="paj">
     <div class="kat-login">
       <img src="ikon/ikon-192.png" alt="JUST ART" class="logo-login" />
-      <h1>JA-GALI</h1>
+      <!-- <h1>GALI</h1> -->
       <p class="soutit">Antre kòd aksè ekip ou a</p>
 
       <form id="fòm-login">
-        <input
-          type="password"
-          id="chan-kòd"
-          placeholder="Kòd aksè"
-          autocomplete="off"
-          required
-        />
+        <input type="password" id="chan-kòd" placeholder="Kòd aksè" autocomplete="off" required />
         <button type="submit">Antre</button>
       </form>
 
@@ -40,21 +36,83 @@
   <section id="paj-chat" class="paj kache">
     <header class="tèt-chat">
       <img src="ikon/ikon-192.png" alt="JUST ART" class="logo-tèt" />
-      <span>JA-GALI</span>
+      <!-- <span>GALI</span> -->
+      <button id="bouton-payroll" class="bouton-tèt" title="Payroll"><img src="ikon/payroll.png" alt="Payroll" class="ikon-bouton"></button>
+      <button id="bouton-caption" class="bouton-tèt" title="Caption"><img src="ikon/caption.png" alt="Caption" class="ikon-bouton"></button>
+      <button id="bouton-alèt" class="bouton-tèt" title="Alèt"><img src="ikon/notification.png" alt="Alèt" class="ikon-bouton"></button>
+      <button id="bouton-rapò" class="bouton-tèt" title="Jenere Rapò"><img src="ikon/rapo.png" alt="Rapò" class="ikon-bouton"></button>
       <button id="bouton-dekonekte" title="Dekonekte">⏻</button>
     </header>
 
     <main id="lis-mesaj" class="lis-mesaj"></main>
 
     <form id="fòm-chat" class="fòm-chat">
-      <input
-        type="text"
-        id="chan-mesaj"
-        placeholder="Ekri yon kòmand... (egzanp: Nouvo pwojè pou Kafe Lakay...)"
-        autocomplete="off"
-      />
+      <input type="text" id="chan-mesaj" placeholder="Ekri yon kòmand... (egzanp: Nouvo pwojè pou Kafe Lakay...)"
+        autocomplete="off" />
       <button type="submit">➤</button>
     </form>
+  </section>
+
+  <!-- ═══════════ PAJ ALÈT ═══════════ -->
+  <section id="paj-alèt" class="paj kache">
+    <header class="tèt-chat">
+      <button id="bouton-tounen-chat" class="bouton-tèt" title="Tounen">←</button>
+      <div class="tit-ak-ikon"><img src="ikon/notification.png" alt="Alèt" class="ikon-tit"> <span>Alèt — Delè k ap Pwoche</span></div>
+    </header>
+
+    <main id="lis-alèt" class="lis-alèt">
+      <p class="mesaj-chajman-alèt">Chajman...</p>
+    </main>
+  </section>
+
+  <!-- ═══════════ PAJ PAYROLL ═══════════ -->
+  <section id="paj-payroll" class="paj kache">
+    <header class="tèt-chat">
+      <button id="bouton-tounen-chat-payroll" class="bouton-tèt" title="Tounen">←</button>
+      <div class="tit-ak-ikon"><img src="ikon/payroll.png" alt="Payroll" class="ikon-tit"> <span>Payroll (3 Dènye Mwa)</span></div>
+    </header>
+
+    <main id="lis-payroll" class="lis-alèt">
+      <p class="mesaj-chajman-alèt">Chajman...</p>
+    </main>
+  </section>
+
+
+  <!-- ═══════════ PAJ CAPTION ═══════════ -->
+  <section id="paj-caption" class="paj kache">
+    <header class="tèt-chat">
+      <button id="bouton-tounen-chat-caption" class="bouton-tèt" title="Tounen">←</button>
+      <div class="tit-ak-ikon"><img src="ikon/caption.png" alt="Caption" class="ikon-tit"> <span>Jenerasyon Caption</span></div>
+    </header>
+
+    <main class="kontni-caption">
+
+      <!-- Fòm pou mande caption -->
+      <form id="fòm-caption" class="fòm-caption">
+        <input type="text" id="chan-non-piblikasyon" placeholder="Non piblikasyon an (egz: CafeKakao)"
+          autocomplete="off" required />
+        <button type="submit" id="bouton-mande-caption">Jenere ✨</button>
+      </form>
+
+      <!-- Zòn rezilta -->
+      <div id="zòn-rezilta-caption" class="kache">
+        <div class="etikèt-caption"><img src="ikon/caption.png" alt="Caption" class="ikon-tit"> Caption pwopoze:</div>
+        <div id="tèks-caption" class="kat-caption"></div>
+        <div class="bouton-aksyon-caption">
+          <button id="bouton-aksepte-caption">✅ Aksepte</button>
+          <button id="bouton-rechaje-caption">🔄 Nouvo vèsyon</button>
+        </div>
+      </div>
+
+      <!-- Konfirmasyon akseptasyon -->
+      <div id="konfirmasyon-caption" class="konfirmasyon-caption kache">
+        ✅ Caption kopye nan pwen-presse!
+      </div>
+
+      <!-- Mesaj chajman / erè -->
+      <p id="estati-caption" class="estati-caption"></p>
+
+    </main>
   </section>
 
   <script src="app.js"></script>
@@ -65,4 +123,5 @@
     }
   </script>
 </body>
+
 </html>

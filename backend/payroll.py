@@ -5,22 +5,24 @@ Modil sa a kalkile lajan chak kolaboratè fè selon kolòn %Kolab ak Kolaboratè
 pou yon peryòd ki chwazi (1 mwa, 2 mwa, oswa 3 mwa).
 """
 
-from datetime import datetime, date, timedelta
+from datetime import date, timedelta
 from typing import Dict, Any
-from sheets_service import li_liy
+from sheets_service import li_valè_brit
+from dat_util import pars_dat
 
 def rezime_payroll(mwa_kont: int = 3) -> dict:
     """
-    Li Sheets la, filtre liy yo pa dat, epi gwoupe pa Kolaboratè:
-      - Som kolòn %Kolab pou chak Kolaboratè
+    Li Sheets la (valè BRIT, pou jere kòrèkteman dat/chif ki estoke kòm
+    vrè tip nan Sheets la), filtre liy yo pa dat, epi gwoupe pa
+    Kolaboratè: Som kolòn %Kolab pou chak Kolaboratè.
     Peryòd la detèmine pa 'mwa_kont' (1 mwa, 2 mwa, oswa 3 mwa).
     """
-    # Nou li ranje A:Q pou gen Dat (A) ak tout done jiska Kolaboratè (Q)
-    liy_yo = li_liy("A:Q")
+    # Nou li ranje A:R pou gen Dat (A) ak tout done jiska Kolaboratè (Q)
+    liy_yo = li_valè_brit("A:R")
     if not liy_yo:
         return {"siksè": True, "mwa_kont": mwa_kont, "data": {}, "mesaj": "Pa gen done nan Sheets la."}
 
-    entete = liy_yo[0]
+    entete = [str(c) for c in liy_yo[0]]
     
     # Jwenn endèks kòlòn yo otomatikman
     idx_dat = 0  # Default A
@@ -55,29 +57,24 @@ def rezime_payroll(mwa_kont: int = 3) -> dict:
         if not liy or len(liy) <= idx_dat:
             continue
 
-        # 1) Parse dat liy lan
-        dat_tèks = liy[idx_dat].strip()
-        try:
-            dat_obj = datetime.strptime(dat_tèks, "%d/%m/%Y").date()
-        except ValueError:
-            # Si fòma a diferan, eseye lòt fòma oswa sote liy lan
-            try:
-                dat_obj = datetime.strptime(dat_tèks, "%Y-%m-%d").date()
-            except ValueError:
-                continue
+        # 1) Parse dat liy lan (jere nimewo seri OSWA tèks otomatikman)
+        dat_obj = pars_dat(liy[idx_dat])
+        if dat_obj is None:
+            continue
 
         # Filtre pa dat
         if dat_obj < limit_dat:
             continue
 
         # 2) Rekipere Kolaboratè ak %Kolab
-        nom_kolab = liy[idx_kolaboratè].strip() if len(liy) > idx_kolaboratè else ""
+        nom_kolab = str(liy[idx_kolaboratè]).strip() if len(liy) > idx_kolaboratè else ""
         if not nom_kolab or nom_kolab == "-":
             continue
 
         try:
-            pousantaj_val = float(str(liy[idx_kolab_pousantaj]).replace(",", ".").replace(" ", "")) if len(liy) > idx_kolab_pousantaj and liy[idx_kolab_pousantaj] else 0.0
-        except ValueError:
+            valè_brit = liy[idx_kolab_pousantaj] if len(liy) > idx_kolab_pousantaj else 0
+            pousantaj_val = float(valè_brit) if valè_brit not in ("", None) else 0.0
+        except (ValueError, TypeError):
             pousantaj_val = 0.0
 
         if pousantaj_val <= 0:

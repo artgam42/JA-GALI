@@ -83,6 +83,28 @@ def jwenn_nimewo_patnè_kontra(non_kliyan: str, kalite: KaliteKliyan) -> tuple[s
     )
 
 
+def detèmine_kalite_kliyan(non_kliyan: str) -> KaliteKliyan:
+    """
+    Detèmine kalite kliyan (patnè/kontra/regilye) an konsiltan lis
+    konfig la, pa non kliyan an (san sansib majiskil/miniskil).
+
+    Si non kliyan an pa jwenn nan ni lis patnè ni lis kontra, li
+    konsidere kòm yon kliyan REGILYE pa default.
+    """
+    konfig = _chaje_konfig_patnè_kontra()
+    non_nòmalize = non_kliyan.strip().upper()
+
+    for non_konfig in konfig.get("patnè", {}):
+        if non_konfig.strip().upper() == non_nòmalize:
+            return "patnè"
+
+    for non_konfig in konfig.get("kontra", {}):
+        if non_konfig.strip().upper() == non_nòmalize:
+            return "kontra"
+
+    return "regilye"
+
+
 # ── Parse kòd egziste nan Description pou konte sekans ──────────────
 #
 #   PW26-816-A : ...      → kliyan regilye : yy='26', mdd='816', lèt='A'

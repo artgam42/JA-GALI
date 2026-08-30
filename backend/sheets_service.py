@@ -80,6 +80,28 @@ def li_liy(range_a: str = "A:G"):
     return rezilta.get("values", [])
 
 
+def li_valè_brit(range_a: str):
+    """
+    Menm jan ak li_liy(), men mande valè "brit" (chif reyèl, pa tèks
+    fòmate tankou '$1,200.00') — nesesè pou kalkil (sonm montan, elt.).
+    Itilize pa rapo_service.py (Faz 6) pou kalkile total revni/depans.
+    """
+    sèvis = _sèvis_sheets()
+    sheet_id, onglè = _id_sheet_ak_onglè()
+
+    rezilta = (
+        sèvis.spreadsheets()
+        .values()
+        .get(
+            spreadsheetId=sheet_id,
+            range=f"'{onglè}'!{range_a}",
+            valueRenderOption="UNFORMATTED_VALUE",
+        )
+        .execute()
+    )
+    return rezilta.get("values", [])
+
+
 def jwenn_pwochen_liy_vid() -> int:
     """
     Detèmine premye liy vid disponib nan onglè a, ann analize kòlòn A

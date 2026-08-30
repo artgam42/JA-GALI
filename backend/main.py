@@ -196,10 +196,39 @@ def chat(mesaj: MesajChat, _: None = Depends(verifye_kòd_aksè)):
         except Exception as e:
             return RepònsChat(response=f"⚠️ Erè pandan anrejistreman depans lan: {e}")
 
-    return RepònsChat(
-        response=f"✅ Mesaj resevwa: « {mesaj.message} » "
-        f"(ekstraksyon Claude ap vin nan tach 1.5)"
-    )
+    # 3. Detekte Delè (Faz 4.2): "delè pou [kòd] se [JJ/MM/AAAA]"
+    from dele_pwoje import detekte_kòmand_delè, pwosè_kòmand_delè
+
+    if detekte_kòmand_delè(mesaj.message) is not None:
+        try:
+            rezilta = pwosè_kòmand_delè(mesaj.message)
+            return RepònsChat(response=rezilta["estati"])
+        except Exception as e:
+            return RepònsChat(response=f"⚠️ Erè pandan ajoute delè sou Calendar: {e}")
+
+    # 4. Detekte Caption (Faz 5.3): "caption pou [non piblikasyon]"
+    patèn_caption = re.compile(r"(?:jenere\s+)?caption\s+pou\s+(.+)", re.IGNORECASE)
+    match_caption = patèn_caption.search(mesaj.message)
+    if match_caption:
+        from caption_service import genere_caption
+        try:
+            non_pib = match_caption.group(1).strip()
+            rezilta = genere_caption(non_pib)
+            return RepònsChat(
+                response=f"📝 Caption pou '{rezilta['non']}' "
+                f"({rezilta['kantite_imaj']} imaj jwenn):\n\n{rezilta['caption']}"
+            )
+        except Exception as e:
+            return RepònsChat(response=f"⚠️ Erè pandan jenerasyon caption: {e}")
+
+    # 5. Otreman: kreyasyon nouvo pwojè (Faz 1.5/1.6, ekstraksyon Claude)
+    from kreyasyon_pwoje import pwosè_nouvo_pwoje
+
+    try:
+        repons_kreyasyon = pwosè_nouvo_pwoje(mesaj.message)
+        return RepònsChat(response=repons_kreyasyon)
+    except Exception as e:
+        return RepònsChat(response=f"⚠️ Erè pandan kreyasyon pwojè a: {e}")
 
 
 @app.get("/payroll")
@@ -211,6 +240,67 @@ def get_payroll(mwa: int = 3, _: None = Depends(verifye_kòd_aksè)):
     try:
         rezilta = rezime_payroll(mwa_kont=mwa)
         return rezilta
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+
+@app.get("/alèt")
+def get_alèt(jou: int = 30, _: None = Depends(verifye_kòd_aksè)):
+    """
+    Faz 4.4 — Woutt ki retounen evènman Calendar k ap pwoche pou
+    montre nan paj "Alèt" PWA a.
+    """
+    from calendar_service import lis_evènman_k_ap_pwoche
+    try:
+        evènman_yo = lis_evènman_k_ap_pwoche(jou_alavans=jou)
+        return {"evènman": evènman_yo}
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+
+@app.post("/rapò")
+def post_rapò(mwa: int = 3, _: None = Depends(verifye_kòd_aksè)):
+    """
+    Faz 6.4 — Woutt ki jenere yon rapò PDF (Sheets → Claude → PDF)
+    epi retounen fichye a dirèkteman pou telechajman. Deklannche pa
+    bouton "Jenere Rapò" PWA a.
+    """
+    from fastapi.responses import Response
+    from rapo_service import jenere_rapò_pdf
+
+    try:
+        pdf_byt, tit = jenere_rapò_pdf(mwa_kont=mwa)
+        non_fichye = f"{tit}.pdf".replace(" ", "_")
+        return Response(
+            content=pdf_byt,
+            media_type="application/pdf",
+            headers={"Content-Disposition": f'attachment; filename="{non_fichye}"'},
+        )
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+
+class KòAksepteCaption(BaseModel):
+    """Kò mesaj lè itilizatè a aksepte yon caption."""
+
+    non_piblikasyon: str
+    caption: str
+
+
+@app.post("/caption/aksepte")
+def post_aksepte_caption(kò: KòAksepteCaption, _: None = Depends(verifye_kòd_aksè)):
+    """
+    Faz 5.4 (amelyorasyon) — Lè itilizatè a klike "Aksepte" sou yon
+    caption nan PWA a, ekri caption final la nan kolòn "Caption" nan
+    Notion (menm liy ak piblikasyon an).
+    """
+    from notion_service import mete_ajou_caption
+
+    try:
+        mete_ajou_caption(kò.non_piblikasyon, kò.caption)
+        return {"siksè": True, "mesaj": "Caption anrejistre nan Notion."}
+    except ValueError as e:
+        raise HTTPException(status_code=404, detail=str(e))
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 

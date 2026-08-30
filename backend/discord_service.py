@@ -68,7 +68,6 @@ def fòmate_template(
 ) -> str:
     """
     Konstwi tèks mesaj Discord la, fòma estanda:
-        Template Discord
         ● {kòd}
         - Type Travay : {type_travay}
         - Infos : {infos}
@@ -77,7 +76,6 @@ def fòmate_template(
         - Statut : {statut}
     """
     return (
-        f"**Template Discord**\n"
         f"● **{kòd}**\n"
         f"- Type Travay : {type_travay}\n"
         f"- Infos : {infos}\n"

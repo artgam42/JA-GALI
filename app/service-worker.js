@@ -4,7 +4,7 @@
 // PA mete API backend la (/chat, /pwoje/fini) an kachèt — done yo dwe
 // toujou fre. Sèlman fichye estatik yo (HTML/CSS/JS/ikòn) mete an kachèt.
 
-const NON_KACHÈ = "ja-gali-v1";
+const NON_KACHÈ = "ja-gali-v2";
 
 const FICHYE_POU_KACHE = [
   "/index.html",
@@ -48,6 +48,12 @@ self.addEventListener("fetch", (evenman) => {
     url.pathname.startsWith("/sante");
 
   if (se_yon_woutt_api) {
+    evenman.respondWith(fetch(evenman.request));
+    return;
+  }
+
+  // Lè w ap devlope sou localhost, toujou inyore kachèt la pou w wè chanjman w yo dirèk
+  if (url.hostname === "localhost" || url.hostname === "127.0.0.1") {
     evenman.respondWith(fetch(evenman.request));
     return;
   }
