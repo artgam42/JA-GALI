@@ -6,7 +6,7 @@ Sheets), ak Faz 2.3 (notifikasyon Discord) — yon sèl mesaj natirèl
 kreye yon pwojè konplè bout an bout.
 """
 
-from datetime import date
+from datetime import date, datetime
 
 
 def pwosè_nouvo_pwoje(mesaj: str) -> str:
@@ -85,10 +85,39 @@ def pwosè_nouvo_pwoje(mesaj: str) -> str:
             "men pwojè a kreye nan Sheets san pwoblèm."
         )
 
+        # Faz 3.2 — otomatikman ajoute delè sou Calendar si Claude ekstrè yon dat
+    # Pa bloke kreyasyon pwojè a si sa echwe — Calendar se yon bonis,
+    # e kòmand manyèl "delè pou KÒD se JJ/MM/AAAA" rete disponib kòm sekou.
+    estati_calendar = ""
+    if delè:
+        dat_delè = None
+        for fòma in ("%d/%m/%Y", "%Y-%m-%d"):
+            try:
+                dat_delè = datetime.strptime(delè.strip(), fòma).date()
+                break
+            except ValueError:
+                continue
+
+        if dat_delè:
+            try:
+                from calendar_service import ajoute_delè_pwoje
+                ajoute_delè_pwoje(kòd, dat_delè)
+                estati_calendar = "\n📅 Delè ajoute sou Calendar."
+            except Exception as e:
+                estati_calendar = (
+                    f"\n⚠️ Delè pa ajoute sou Calendar ({e}) — itilize kòmand "
+                    f"'delè pou {kòd} se JJ/MM/AAAA' pou ajoute l manyèlman."
+                )
+        else:
+            estati_calendar = (
+                f"\n⚠️ Pa t ka konprann fòma delè a ('{delè}') — itilize kòmand "
+                f"'delè pou {kòd} se JJ/MM/AAAA' pou ajoute l manyèlman."
+            )
+
     mesaj_avètisman = f"\n{avètisman}" if avètisman else ""
 
     return (
         f"✅ Pwojè kreye: **{kòd}**\n"
         f"Kliyan: {kliyan} | Montan: {montan} goud | Peye: {peye} goud\n"
-        f"{estati_discord}{mesaj_avètisman}"
+        f"{estati_discord}{estati_calendar}{mesaj_avètisman}"
     )
