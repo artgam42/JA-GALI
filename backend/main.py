@@ -15,6 +15,7 @@ from pydantic import BaseModel
 # pyrefly: ignore [missing-import]
 from dotenv import load_dotenv
 import os
+import re
 
 load_dotenv()
 
@@ -176,8 +177,6 @@ def chat(mesaj: MesajChat, _: None = Depends(verifye_kòd_aksè)):
             return RepònsChat(response=f"⚠️ Erè pandan chèche lis solde: {e}")
 
     # ── Detekte Kòmand Peman ak Depans (Faz 3) ───────────────────────
-    import re
-
     # 1. Detekte Peman: "peye [montan] pou [kòd]" oswa "peman [montan] [kòd]"
     patèn_peman = re.compile(
         r"\b(?:peye|peman)\s+(\d+(?:\.\d+)?)\s*(?:pou\s+)?(?:pwojè\s+)?\b(PW\d{2}-\d{3,4}-[A-Za-z]|JA-[PC]\d{3}-\d{3,4}[A-Za-z])\b",
