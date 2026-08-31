@@ -266,7 +266,7 @@ def get_payroll(mwa: int = 3, _: None = Depends(verifye_kòd_aksè)):
 
 
 @app.get("/alèt")
-def get_alèt(jou: int = 30, _: None = Depends(verifye_kòd_aksè)):
+def get_alèt(jou: int = 90, _: None = Depends(verifye_kòd_aksè)):
     """
     Faz 4.4 — Woutt ki retounen evènman Calendar k ap pwoche pou
     montre nan paj "Alèt" PWA a.

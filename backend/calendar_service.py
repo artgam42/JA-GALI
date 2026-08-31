@@ -91,7 +91,7 @@ def ajoute_delè_pwoje(kòd_pwoje: str, dat_delè: date) -> str:
 # ── Faz 4.4 — Li evènman k ap pwoche (pou paj "Alèt" PWA) ────────────
 
 
-def lis_evènman_k_ap_pwoche(jou_alavans: int = 30) -> list:
+def lis_evènman_k_ap_pwoche(jou_alavans: int = 90) -> list:
     """
     Jwenn tout evènman ki soti jodi a jiska X jou nan avni, triye pa
     dat pwochèn.

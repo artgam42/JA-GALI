@@ -180,7 +180,7 @@ async function chaje_alèt() {
     const evènman_yo = done_json.evènman || [];
 
     if (evènman_yo.length === 0) {
-      lisAlèt.innerHTML = '<p class="alèt-vid">✅ Pa gen delè nan 30 pwochen jou yo.</p>';
+      lisAlèt.innerHTML = '<p class="alèt-vid">✅ Pa gen delè nan 90 pwochen jou yo.</p>';
       return;
     }
 
