@@ -546,20 +546,20 @@ body {
 
 .gid-tit {
   font-weight: 400;
-  font-size: 0.80rem;
+  font-size: 0.85rem;
   margin-bottom: 0.30rem;
 }
 
 .gid-deskripsyon {
   color: var(--gri-mwayen);
-  font-size: 0.70rem;
+  font-size: 0.76rem;
   margin-bottom: 0.4rem;
 }
 
 .gid-souliste {
   list-style: none;
   color: var(--gri-mwayen);
-  font-size: 0.70rem;
+  font-size: 0.76rem;
   display: flex;
   flex-direction: column;
   gap: 0.2rem;
@@ -571,7 +571,7 @@ body {
   border: 1px solid #2a4a2a;
   border-radius: 8px;
   padding: 0.6rem 0.8rem;
-  font-size: 0.70rem;
+  font-size: 0.76rem;
   color: var(--vèt-briyan);
   margin-bottom: 0.3rem;
   overflow-x: auto;
@@ -580,6 +580,6 @@ body {
 
 .gid-egzanp {
   color: var(--gri-mwayen);
-  font-size: 0.7rem;
+  font-size: 0.76rem;
   font-style: italic;
 }

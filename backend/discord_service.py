@@ -42,7 +42,7 @@ def _webhook_url(kalite: KaliteKliyan) -> str:
     """Jwenn URL webhook nan .env selon kalite kliyan."""
     kle_env = {
         "regilye": "DISCORD_WEBHOOK_REGILYE",
-        "patnè": "DISCORD_WEBHOOK_PATNÈ",
+        "patnè": "DISCORD_WEBHOOK_PATNE",
         "kontra": "DISCORD_WEBHOOK_KONTRA",
     }[kalite]
 
@@ -165,7 +165,9 @@ def voye_notifikasyon_san_kraze(
     """
     try:
         return voye_notifikasyon_nouvo_pwoje(kòd, type_travay, infos, delè, kolaboratè)
-    except Exception:
+    except Exception as e:
+        import logging
+        logging.warning(f"Notifikasyon Discord echwe: {e}")
         return None
 
 
