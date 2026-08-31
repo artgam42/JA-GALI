@@ -168,7 +168,7 @@ async function chaje_alèt() {
   const kòd = localStorage.getItem(KLE_STOKAJ);
 
   try {
-    const repons = await fetch(`${API_URL}/alèt?jou=30`, {
+    const repons = await fetch(`${API_URL}/alèt?jou=90`, {
       headers: { "X-Access-Code": kòd },
     });
 
